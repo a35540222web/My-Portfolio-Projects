@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blacklist Center - ระบบตรวจสอบบัญชีดำ</title>
+    
+    <!-- ดึง Tailwind CSS มาใช้สำหรับกำหนดดีไซน์ผ่าน Class -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- ดึงฟอนต์ Prompt จาก Google Fonts มาใช้ให้เว็บดูทันสมัย -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- ส่วนแถบเมนูบนสุด (Navigation Bar) -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <!-- โลโก้: เมื่อคลิกจะเรียกฟังก์ชัน showPage เพื่อกลับไปหน้าหลัก -->
+                <div class="flex-shrink-0 cursor-pointer" onclick="showPage('searchPage')">
+                    <span class="font-bold text-2xl text-red-600">🚫 Blacklist Center</span>
+                </div>
+                <!-- ปุ่มสลับหน้าเว็บ -->
+                <div class="flex space-x-8">
+                    <button id="nav-search" onclick="showPage('searchPage')" class="nav-btn font-medium py-2">🔍 ค้นหา</button>
+                    <button id="nav-report" onclick="showPage('reportPage')" class="nav-btn font-medium py-2">📢 แจ้งเบาะแส</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ส่วนเนื้อหาหลัก (Main) -->
+    <main class="max-w-3xl mx-auto px-4 py-10">
+
+        <!-- หน้าที่ 1: ส่วนค้นหา (Search Page) -->
+        <div id="searchPage" class="page-section">
+            <div class="text-center mb-10">
+                <h1 class="text-4xl font-bold text-slate-800 mb-4">ตรวจสอบประวัติคนโกง</h1>
+                <p class="text-slate-500">เช็คให้ชัวร์ก่อนโอน รู้ทันมิจฉาชีพ ปลอดภัยไว้ก่อน</p>
+            </div>
+
+            <!-- กล่องค้นหา -->
+            <div class="bg-white p-6 rounded-2xl shadow-lg">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <input type="text" id="searchInput" placeholder="กรอก Username, เลขบัญชี, หรือชื่อ-สกุล..." 
+                        class="flex-1 p-4 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 text-lg">
+                    <button onclick="handleSearch()" 
+                        class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-xl transition duration-300">
+                        ค้นหาทันที
+                    </button>
+                </div>
+            </div>
+
+            <!-- พื้นที่แสดงผลการค้นหา (เริ่มแรกจะถูกซ่อนไว้) -->
+            <div id="searchResultArea" class="mt-10 hidden">
+                <h3 class="text-xl font-semibold mb-4 text-slate-700 border-b pb-2">ผลการค้นหา</h3>
+                <div id="resultList" class="space-y-4">
+                    <!-- ข้อมูลผลลัพธ์จะถูกเพิ่มเข้ามาที่นี่ด้วย JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- หน้าที่ 2: ฟอร์มแจ้งเบาะแส (Report Page) -->
+        <div id="reportPage" class="page-section hidden">
+            <div class="bg-white p-8 rounded-2xl shadow-lg border border-slate-100">
+                <h2 class="text-2xl font-bold mb-6 text-slate-800 flex items-center">
+                    <span class="bg-red-100 p-2 rounded-full mr-3 text-2xl">📢</span> แจ้งบัญชีคนโกง (Blacklist)
+                </h2>
+                
+                <form id="reportForm" onsubmit="handleReportSubmit(event)">
+                    <!-- ส่วนกรอกชื่อและประเภท -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Username / ชื่อคนโกง *</label>
+                            <input type="text" required class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none" placeholder="เช่น Somchai_K">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">ประเภทการโกง *</label>
+                            <select class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none">
+                                <option>บิด (ไม่จ่าย/ไม่โอน)</option>
+                                <option>หลอกขายไอดี</option>
+                                <option>อื่นๆ</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- ส่วนข้อมูลติดต่อ -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">ช่องทางการติดต่อ (Link / เบอร์โทร)</label>
+                        <input type="text" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none" placeholder="https://facebook.com/...">
+                    </div>
+
+                    <!-- ส่วนรายละเอียด -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">รายละเอียดเหตุการณ์ *</label>
+                        <textarea rows="4" required class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none" placeholder="อธิบายพฤติกรรมการโกง..."></textarea>
+                    </div>
+
+                    <!-- ส่วนอัปโหลดไฟล์ (จำลอง) -->
+                    <div class="mb-8">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">แนบหลักฐาน (รูปภาพแชท / สลิป)</label>
+                        <div class="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center hover:bg-slate-50 cursor-pointer relative">
+                            <span class="text-slate-400">คลิกเพื่ออัปโหลด หรือลากไฟล์มาวาง</span>
+                            <input type="file" class="absolute inset-0 opacity-0 cursor-pointer">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 rounded-lg transition text-lg shadow-lg">
+                        บันทึกข้อมูล Blacklist
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- หน้าที่ 3: หน้าแสดงรายละเอียดเจาะลึก (Case Detail Page) -->
+        <div id="detailPage" class="page-section hidden">
+            <button onclick="showPage('searchPage')" class="mb-4 text-slate-500 hover:text-slate-800 flex items-center">
+                ← กลับหน้าค้นหา
+            </button>
+            <div id="caseDetailContent">
+                <!-- เนื้อหาจะถูกสร้างขึ้นด้วย JavaScript เมื่อคลิกดูรายละเอียด -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ส่วนท้าย (Footer) -->
+    <footer class="text-center py-8 text-slate-400 text-sm">
+        <p>© 2026 Blacklist Center. All rights reserved.</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>

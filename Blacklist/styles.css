@@ -1,0 +1,32 @@
+/* ตั้งค่าฟอนต์หลักของทั้งเว็บไซต์ */
+body { 
+    font-family: 'Prompt', sans-serif; 
+}
+
+/* คลาสสำหรับซ่อน Element ที่เรายังไม่ต้องการให้เห็น */
+.hidden { 
+    display: none; 
+}
+
+ /* ตกแต่งปุ่มเมนูตอนปกติ */
+.nav-btn {
+    color: #475569;
+    transition: all 0.2s;
+}
+
+/* คลาสพิเศษ: เมื่อเมนูนั้นถูกเลือก (Active) จะมีสีแดงและขีดล่าง */
+.active-nav { 
+    color: #dc2626 !important; 
+    border-bottom: 2px solid #dc2626; 
+}
+
+/* ตั้งค่าแอนิเมชันตอนสลับหน้า ให้หน้าเว็บค่อยๆ ลอยขึ้นมา (Fade In) */
+.page-section {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* กำหนดลำดับการเคลื่อนไหวของแอนิเมชัน */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
